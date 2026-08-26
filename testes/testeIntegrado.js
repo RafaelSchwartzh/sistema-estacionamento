@@ -25,66 +25,52 @@ controle.obterCadastroClientes().cadastrarCliente(emp);
 console.log(emp.toString());
 
 console.log("\n=== TESTE 4: Entrada de Professor ===");
-let resultadoEntrada = controle.autorizarEntrada("ABC1234");
-let autorizadoProf = resultadoEntrada.autorizado;
-let motivoProf = resultadoEntrada.motivo;
-console.log("Autorizado: " + autorizadoProf);
-console.log("Motivo: " + motivoProf);
+let resultado1 = controle.autorizarEntrada("ABC1234");
+console.log("Autorizado: " + resultado1.autorizado);
+console.log("Motivo: " + resultado1.motivo);
 console.log("Vagas ocupadas: " + controle.obterVagasOcupadas());
 
 console.log("\n=== TESTE 5: Entrada de Estudante ===");
-resultadoEntrada = controle.autorizarEntrada("DEF5678");
-let autorizadoEst = resultadoEntrada.autorizado;
-console.log("Autorizado: " + autorizadoEst);
+let resultado2 = controle.autorizarEntrada("DEF5678");
+console.log("Autorizado: " + resultado2.autorizado);
 console.log("Vagas ocupadas: " + controle.obterVagasOcupadas());
 
 console.log("\n=== TESTE 6: Entrada de Cliente Avulso ===");
-resultadoEntrada = controle.autorizarEntrada("XYZ9999");
-let autorizadoAvulso = resultadoEntrada.autorizado;
-console.log("Autorizado: " + autorizadoAvulso);
+let resultado3 = controle.autorizarEntrada("XYZ9999");
+console.log("Autorizado: " + resultado3.autorizado);
 console.log("Vagas ocupadas: " + controle.obterVagasOcupadas());
 
-console.log("\n=== TESTE 7: Saida de Professor (Gratuito) ===");
-let resultadoSaida = controle.processarSaida("ABC1234", true);
-let sucessoSaida = resultadoSaida.sucesso;
-if (sucessoSaida) {
-    let ticket = resultadoSaida.ticket;
-    console.log("Placa: " + ticket.getPlaca());
-    console.log("Tipo: " + ticket.getTipoCliente());
-    console.log("Custo: " + ticket.getCusto());
-    console.log("Valor Pago: " + ticket.getValorPago());
+console.log("\n=== TESTE 7: Saida de Professor ===");
+let saidaProf = controle.processarSaida("ABC1234", true);
+if (saidaProf.sucesso) {
+    console.log("Placa: " + saidaProf.ticket.getPlaca());
+    console.log("Tipo: " + saidaProf.ticket.getTipoCliente());
+    console.log("Custo: " + saidaProf.ticket.getCusto());
+    console.log("Valor Pago: " + saidaProf.ticket.getValorPago());
 }
 console.log("Vagas ocupadas: " + controle.obterVagasOcupadas());
 
 console.log("\n=== TESTE 8: Saida de Estudante ===");
-resultadoSaida = controle.processarSaida("DEF5678", true);
-sucessoSaida = resultadoSaida.sucesso;
-if (sucessoSaida) {
-    let ticket = resultadoSaida.ticket;
-    let placar = ticket.getPlaca();
-    let tipoTicket = ticket.getTipoCliente();
-    let custoTicket = ticket.getCusto();
-    console.log("Placa: " + placar);
-    console.log("Tipo: " + tipoTicket);
-    console.log("Custo: " + custoTicket);
+let saidaEst = controle.processarSaida("DEF5678", true);
+if (saidaEst.sucesso) {
+    console.log("Placa: " + saidaEst.ticket.getPlaca());
+    console.log("Tipo: " + saidaEst.ticket.getTipoCliente());
+    console.log("Custo: " + saidaEst.ticket.getCusto());
     console.log("Saldo apos: " + est.getSaldo());
 }
 console.log("Vagas ocupadas: " + controle.obterVagasOcupadas());
 
-console.log("\n=== TESTE 9: Saida de Cliente Avulso (Pagou) ===");
-resultadoSaida = controle.processarSaida("XYZ9999", true);
-sucessoSaida = resultadoSaida.sucesso;
-if (sucessoSaida) {
-    let ticket = resultadoSaida.ticket;
-    console.log("Placa: " + ticket.getPlaca());
-    console.log("Tipo: " + ticket.getTipoCliente());
-    console.log("Custo: " + ticket.getCusto());
-    console.log("Valor Pago: " + ticket.getValorPago());
+console.log("\n=== TESTE 9: Saida de Cliente Avulso ===");
+let saidaAvulso = controle.processarSaida("XYZ9999", true);
+if (saidaAvulso.sucesso) {
+    console.log("Placa: " + saidaAvulso.ticket.getPlaca());
+    console.log("Tipo: " + saidaAvulso.ticket.getTipoCliente());
+    console.log("Custo: " + saidaAvulso.ticket.getCusto());
+    console.log("Valor Pago: " + saidaAvulso.ticket.getValorPago());
 }
 
 console.log("\n=== TESTE 10: Status Final ===");
 console.log(controle.toString());
-let vagasDisp = controle.obterVagasDisponiveis();
-console.log("Total de vagas disponiveis: " + vagasDisp);
+console.log("Total de vagas disponiveis: " + controle.obterVagasDisponiveis());
 
 console.log("\n=== FIM DOS TESTES ===");

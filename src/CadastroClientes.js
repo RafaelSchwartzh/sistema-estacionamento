@@ -4,51 +4,66 @@ import { Empresa } from "./Empresa.js";
 
 export class CadastroClientes {
     constructor() {
-        this.clientes = [];
+        this.clientes = new Map();
+        this.placas = new Map();
     }
 
     cadastrarCliente(cliente) {
-        this.clientes.push(cliente);
+        let cpfCnpj = cliente.getCpfCnpj();
+        this.clientes.set(cpfCnpj, cliente);
+        
+        let veiculos = cliente.getVeiculos();
+        for (let i = 0; i < veiculos.length; i++) {
+            let placa = veiculos[i].getPlaca();
+            this.placas.set(placa, cpfCnpj);
+        }
     }
 
     buscarPorCpfCnpj(cpfCnpj) {
-        for (let i = 0; i < this.clientes.length; i++) {
-            if (this.clientes[i].getCpfCnpj() === cpfCnpj) {
-                return this.clientes[i];
-            }
+        let resultado = this.clientes.get(cpfCnpj);
+        if (resultado == null) {
+            return null;
         }
-        return null;
+        return resultado;
     }
 
     buscarPorPlaca(placa) {
-        let clienteEncontrado = null;
-        for (let i = 0; i < this.clientes.length; i++) {
-            let temPlaca = this.clientes[i].temVeiculo(placa);
-            if (temPlaca) {
-                clienteEncontrado = this.clientes[i];
-            }
+        let cpfCnpj = this.placas.get(placa);
+        if (cpfCnpj == null) {
+            return null;
         }
-        return clienteEncontrado;
+        let cliente = this.clientes.get(cpfCnpj);
+        return cliente;
     }
 
     obterTodos() {
-        return this.clientes;
+        let resultado = [];
+        for (let cliente of this.clientes.values()) {
+            resultado.push(cliente);
+        }
+        return resultado;
     }
 
     removerCliente(cpfCnpj) {
-        for (let i = 0; i < this.clientes.length; i++) {
-            if (this.clientes[i].getCpfCnpj() === cpfCnpj) {
-                this.clientes.splice(i, 1);
-                return true;
-            }
+        let cliente = this.clientes.get(cpfCnpj);
+        if (cliente == null) {
+            return false;
         }
-        return false;
+        
+        let veiculos = cliente.getVeiculos();
+        for (let i = 0; i < veiculos.length; i++) {
+            let placa = veiculos[i].getPlaca();
+            this.placas.delete(placa);
+        }
+        
+        this.clientes.delete(cpfCnpj);
+        return true;
     }
 
     toString() {
         let resultado = "=== CADASTRO DE CLIENTES ===\n";
-        for (let i = 0; i < this.clientes.length; i++) {
-            resultado = resultado + this.clientes[i].toString() + "\n";
+        for (let cliente of this.clientes.values()) {
+            resultado = resultado + cliente.toString() + "\n";
         }
         return resultado;
     }

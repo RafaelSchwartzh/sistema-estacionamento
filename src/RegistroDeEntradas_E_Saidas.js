@@ -3,30 +3,32 @@ import { TicketEstacionamento } from "./TicketEstacionamento.js";
 export class RegistroDeEntradas_E_Saidas {
     constructor() {
         this.tickets = [];
+        this.ticketsPorPlaca = new Map();
     }
 
     registrarEntrada(placa, tipoCliente) {
         let ticket = new TicketEstacionamento(placa, tipoCliente);
         this.tickets.push(ticket);
+        this.ticketsPorPlaca.set(placa, ticket);
         return ticket;
     }
 
     buscarPorPlaca(placa) {
-        let ticketEncontrado = null;
-        for (let i = 0; i < this.tickets.length; i++) {
-            let ehPlaca = this.tickets[i].getPlaca() === placa;
-            let naoPossuiSaida = this.tickets[i].getSaida() === null;
-            if (ehPlaca && naoPossuiSaida) {
-                ticketEncontrado = this.tickets[i];
-            }
+        let ticket = this.ticketsPorPlaca.get(placa);
+        if (ticket == null) {
+            return null;
         }
-        return ticketEncontrado;
+        if (ticket.getSaida() === null) {
+            return ticket;
+        }
+        return null;
     }
 
     registrarSaida(placa) {
         let ticket = this.buscarPorPlaca(placa);
         if (ticket != null) {
             ticket.registrarSaida();
+            this.ticketsPorPlaca.delete(placa);
             return ticket;
         }
         return null;

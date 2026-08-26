@@ -37,8 +37,7 @@ export class ControleEstacionamento {
     }
 
     autorizarEntrada(placa) {
-        let bloqueado = this.verificarBloqueio(placa);
-        if (bloqueado) {
+        if (this.verificarBloqueio(placa)) {
             return {
                 autorizado: false,
                 motivo: "Placa bloqueada"
@@ -55,8 +54,7 @@ export class ControleEstacionamento {
         let cliente = this.cadastroClientes.buscarPorPlaca(placa);
 
         if (cliente != null) {
-            let pode = cliente.podeEntrar();
-            if (!pode) {
+            if (!cliente.podeEntrar()) {
                 return {
                     autorizado: false,
                     motivo: "Cliente nao pode entrar"
@@ -69,8 +67,9 @@ export class ControleEstacionamento {
                 let veiculosEstacionados = 0;
                 let veiculos = cliente.getVeiculos();
                 for (let i = 0; i < veiculos.length; i++) {
-                    let placa2 = veiculos[i].getPlaca();
-                    let ticket = this.registroEntradas.buscarPorPlaca(placa2);
+                    let v = veiculos[i];
+                    let placaDoVeiculo = v.getPlaca();
+                    let ticket = this.registroEntradas.buscarPorPlaca(placaDoVeiculo);
                     if (ticket != null) {
                         veiculosEstacionados = veiculosEstacionados + 1;
                     }
@@ -79,7 +78,7 @@ export class ControleEstacionamento {
                 if (veiculosEstacionados >= 1) {
                     return {
                         autorizado: false,
-                        motivo: "Professor ja tem veiculo estacionado"
+                        motivo: "Professor ja tem veiculo"
                     };
                 }
             }
@@ -122,7 +121,7 @@ export class ControleEstacionamento {
             let tipoCliente = cliente.constructor.name;
 
             if (tipoCliente === "Estudante") {
-                let descontoInfo = this.desconto.aplicar(cliente, ticket);
+                let descontoInfo = this.desconto.aplicar(cliente, ticket, this.registroEntradas);
                 if (descontoInfo.valor > 0) {
                     ticket.setDesconto(descontoInfo.nome, descontoInfo.valor);
                 }
