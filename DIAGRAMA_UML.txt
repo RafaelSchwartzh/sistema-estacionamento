@@ -1,0 +1,276 @@
+================================================================================
+                    DIAGRAMA DE CLASSES - SISTEMA DE ESTACIONAMENTO
+================================================================================
+
+                                    App
+                                     |
+                    _________________|_________________
+                   |                                   |
+         RegistroDeEntradas_E_Saidas          CadastroClientes
+                   |                                   |
+            usa dados                            gerencia
+                   |                                   |
+            TicketEstacionamento                  Cliente (superclasse)
+                                                      |
+                            ________________________________________
+                           |                |                       |
+                        Professor      Estudante               Empresa
+                        (gratuito)      (ingresso)            (diária)
+
+
+================================================================================
+                                  CLASSES
+================================================================================
+
+CLASS: Cliente
+  Propriedades:
+    - cpfCnpj: string
+    - nome: string
+    - veiculos: array
+  
+  Metodos:
+    - getCpfCnpj()
+    - getNome()
+    - adicionarVeiculo(placa)
+    - temVeiculo(placa)
+    - getVeiculos()
+    - toString()
+
+  Subclasses:
+    - Professor
+    - Estudante
+    - Empresa
+
+
+CLASS: Professor extends Cliente
+  Propriedades:
+    - siape: string
+  
+  Metodos:
+    - getSiape()
+    - adicionarVeiculo(placa) [valida max 2]
+    - podeEntrar()
+    - toString()
+
+
+CLASS: Estudante extends Cliente
+  Propriedades:
+    - matricula: string
+    - saldo: number
+    - bloqueado: boolean
+  
+  Metodos:
+    - getMatricula()
+    - getSaldo()
+    - getBloqueado()
+    - carregarSaldo(valor)
+    - deduzirSaldo(valor)
+    - podeEntrar()
+    - adicionarVeiculo(placa) [valida max 1]
+    - toString()
+
+
+CLASS: Empresa extends Cliente
+  Propriedades:
+    - razaoSocial: string
+    - debito: number
+    - inadimplente: boolean
+  
+  Metodos:
+    - getRazaoSocial()
+    - getDebito()
+    - getInadimplente()
+    - adicionarDebito(valor)
+    - pagarDebito(valor)
+    - marcarInadimplente()
+    - podeEntrar()
+    - toString()
+
+
+CLASS: Veiculo
+  Propriedades:
+    - placa: string
+  
+  Metodos:
+    - getPlaca()
+    - toString()
+
+
+CLASS: ClienteAvulso
+  Propriedades:
+    - placa: string
+  
+  Metodos:
+    - getPlaca()
+    - toString()
+
+
+CLASS: TicketEstacionamento
+  Propriedades:
+    - placa: string
+    - tipoCliente: string
+    - entrada: Date
+    - saida: Date (null inicialmente)
+    - custo: number
+    - desconto: string
+    - valorDesconto: number
+    - valorDevido: number
+    - valorPago: number
+  
+  Metodos:
+    - getPlaca()
+    - getTipoCliente()
+    - getEntrada()
+    - getSaida()
+    - registrarSaida()
+    - setCusto(valor)
+    - setDesconto(nome, valor)
+    - setValorPago(valor)
+    - getCusto()
+    - getValorDevido()
+    - getValorPago()
+    - toString()
+
+
+CLASS: CadastroClientes
+  Propriedades:
+    - clientes: array
+  
+  Metodos:
+    - cadastrarCliente(cliente)
+    - buscarPorCpfCnpj(cpfCnpj)
+    - buscarPorPlaca(placa)
+    - obterTodos()
+    - removerCliente(cpfCnpj)
+    - toString()
+
+
+CLASS: RegistroDeEntradas_E_Saidas
+  Propriedades:
+    - tickets: array
+  
+  Metodos:
+    - registrarEntrada(placa, tipoCliente)
+    - buscarPorPlaca(placa)
+    - registrarSaida(placa)
+    - obterTodos()
+    - obterPorPlaca(placa)
+    - toString()
+
+
+CLASS: CalculadoraCusto
+  Metodos:
+    - calcular(ticket)
+      * Professor: retorna 0
+      * Estudante: retorna 10
+      * Empresa: retorna 70 ou 140
+      * ClienteAvulso: retorna valor por hora ou diária
+
+
+CLASS: Desconto
+  Metodos:
+    - aplicar(cliente, ticket)
+      * Retorna objeto com nome e valor do desconto
+      * Atualmente retorna "nenhum" para todos
+
+
+CLASS: ControleEstacionamento
+  Propriedades:
+    - cadastroClientes: CadastroClientes
+    - registroEntradas: RegistroDeEntradas_E_Saidas
+    - bloqueados: array
+    - calculadora: CalculadoraCusto
+    - desconto: Desconto
+    - vagas: number (9000)
+    - vagasOcupadas: number
+  
+  Metodos:
+    - verificarBloqueio(placa)
+    - adicionarAoBloqueio(placa)
+    - autorizarEntrada(placa)
+    - processarSaida(placa, pagou)
+    - obterVagasDisponiveis()
+    - obterVagasOcupadas()
+    - obterCadastroClientes()
+    - obterRegistroEntradas()
+    - obterBloqueados()
+    - toString()
+
+
+================================================================================
+                              RELACOES ENTRE CLASSES
+================================================================================
+
+Professor
+  - Herda de: Cliente
+  - Usada por: ControleEstacionamento
+  - Relacionada com: Veiculo
+
+Estudante
+  - Herda de: Cliente
+  - Usada por: ControleEstacionamento
+  - Relacionada com: Veiculo
+
+Empresa
+  - Herda de: Cliente
+  - Usada por: ControleEstacionamento
+  - Relacionada com: Veiculo
+
+ClienteAvulso
+  - Não herda de nada
+  - Usada por: ControleEstacionamento
+
+TicketEstacionamento
+  - Usada por: RegistroDeEntradas_E_Saidas
+  - Usada por: CalculadoraCusto
+  - Usada por: Desconto
+  - Usada por: ControleEstacionamento
+
+CadastroClientes
+  - Usada por: ControleEstacionamento
+  - Contém: Cliente (e suas subclasses)
+
+RegistroDeEntradas_E_Saidas
+  - Usada por: ControleEstacionamento
+  - Contém: TicketEstacionamento
+
+CalculadoraCusto
+  - Usada por: ControleEstacionamento
+  - Recebe: TicketEstacionamento
+
+Desconto
+  - Usada por: ControleEstacionamento
+  - Recebe: TicketEstacionamento
+
+ControleEstacionamento
+  - Classe principal
+  - Usa todas as outras
+
+
+================================================================================
+                            FLUXO DE FUNCIONAMENTO
+================================================================================
+
+ENTRADA:
+  1. Cliente chegue com placa
+  2. ControleEstacionamento.autorizarEntrada(placa)
+  3. Verifica se está bloqueado
+  4. Busca cliente em CadastroClientes
+  5. Se encontrar, verifica se pode entrar
+  6. Se pode, registra entrada em RegistroDeEntradas_E_Saidas
+  7. Cria TicketEstacionamento
+  8. Retorna autorizado ou negado
+
+SAIDA:
+  1. Cliente chega para sair
+  2. ControleEstacionamento.processarSaida(placa, pagou)
+  3. Busca ticket em RegistroDeEntradas_E_Saidas
+  4. Registra hora de saída
+  5. CalculadoraCusto.calcular(ticket) para saber o preço
+  6. Desconto.aplicar() para ver se tem desconto
+  7. Se cliente cadastrado: deduz saldo ou adiciona débito
+  8. Se cliente avulso e não pagou: adiciona ao bloqueio
+  9. Retorna informações do ticket
+
+
+================================================================================
